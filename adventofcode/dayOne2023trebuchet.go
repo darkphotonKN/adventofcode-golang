@@ -53,9 +53,9 @@ func parseLine(t string) []string {
 }
 
 func filterDigits(s []string) []string {
-
 	// using make to preallocate memory for the correct sized string
 	digitsOnly := make([]string, len(s))
+
 	for i, textLine := range s {
 		var builder strings.Builder
 
