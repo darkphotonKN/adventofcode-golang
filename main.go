@@ -1,8 +1,19 @@
 package main
 
-import "challenges/adventofcode"
+import (
+	adventofcode2021 "challenges/adventofcode/2021"
+	// adventofcode2023 "challenges/adventofcode/2023"
+)
 
 func main() {
 
-	adventofcode.Trebuchet()
+	/*
+		2021
+	*/
+	adventofcode2021.Submarine()
+
+	/*
+		2023
+	*/
+	// adventofcode2023.Trebuchet()
 }
