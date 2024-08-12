@@ -126,6 +126,7 @@ func Trebuchet() {
 	// sum the numbers
 	var count int
 	for _, digit := range onlyFirstAndLastDigits {
+		// account for numbers that came as single digits
 		if len(digit) == 1 {
 			digit = digit + digit
 		}

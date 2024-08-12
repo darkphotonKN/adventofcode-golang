@@ -1,15 +1,20 @@
 package main
 
 import (
-	// adventofcode2021 "challenges/adventofcode/2021"
-	adventofcode2023 "challenges/adventofcode/2023"
-	// algorithms "challenges/algorithms/sort"
+	"challenges/concurrency"
 )
+
+// adventofcode2021 "challenges/adventofcode/2021"
+// adventofcode2023 "challenges/adventofcode/2023"
+// algorithms "challenges/algorithms/sort"
 
 func main() {
 	// ALGORITHMS
 	// algorithms.RunBubbleSort()
 	// algorithms.BubbleSort()
+	// numbers := []int{212, 18, 110, 454, 34, 20, 110}
+	// target := 18
+	// search.BinarySearch(numbers, target)
 
 	// ADVENT OF CODE
 	/*
@@ -21,6 +26,9 @@ func main() {
 	/*
 		2023
 	*/
-	adventofcode2023.Trebuchet()
+	// adventofcode2023.Trebuchet()
+
+	// CONCURRENCY
+	concurrency.TreasureHunt()
 
 }
