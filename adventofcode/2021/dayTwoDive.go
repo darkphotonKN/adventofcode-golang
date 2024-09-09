@@ -8,12 +8,13 @@ import (
 	"strings"
 )
 
-type submarineStats struct {
+type submarineS struct {
 	position int
 	depth    int
+	aim      int
 }
 
-func (sub *submarineStats) updatePosition(direction Direction, value int) int {
+func (sub *submarineS) updatePosition(direction direction, value int) int {
 
 	switch direction {
 	case UP:
@@ -33,20 +34,19 @@ func (sub *submarineStats) updatePosition(direction Direction, value int) int {
 	return 0
 }
 
-type Direction string
+type direction string
 
 const (
-	UP      Direction = "up"
-	DOWN    Direction = "down"
-	FORWARD Direction = "forward"
+	UP      direction = "up"
+	DOWN    direction = "down"
+	FORWARD direction = "forward"
 )
 
 func Dive() {
 	fmt.Println("Dive")
 	text := tools.FileReader("./adventofcode/2021/data/dayTwo.txt")
 
-	log.Println(text[0])
-	submarine := submarineStats{}
+	submarine := submarineS{}
 
 	// loop through instructions and update submarine voyage
 
@@ -61,7 +61,7 @@ func Dive() {
 			continue
 		}
 
-		position := Direction(instructions[0])
+		position := direction(instructions[0])
 		fmt.Println("position was:", position)
 		value := instructions[1]
 		intValue, err := strconv.Atoi(value)
@@ -77,6 +77,56 @@ func Dive() {
 	log.Println("position:", submarine.position)
 	log.Println("depth:", submarine.depth)
 	log.Println("position x depth:", submarine.position*submarine.depth)
+}
+
+func (s *submarineS) AimModeMove(direction direction, value int) {
+	switch direction {
+	// only aims upwards, does not move
+	case UP:
+		s.aim -= value
+
+	// only aims downwards, does not move
+	case DOWN:
+		s.aim += value
+
+		// moves in the direction of the aim
+	case FORWARD:
+		s.position += value
+		s.depth += value * s.aim
+	}
+}
+
+func DivePartTwo() {
+	fmt.Println("Dive - Part Two")
+	text := tools.FileReader("./adventofcode/2021/data/dayTwo.txt")
+
+	instructions := strings.Split(text, "\n")
+
+	submarine := submarineS{}
+
+	for _, instruction := range instructions {
+		insSplit := strings.Split(instruction, " ")
+
+		if len(insSplit) < 2 {
+			continue
+		}
+
+		dir := direction(insSplit[0]) // cast to direction type
+		val, err := strconv.Atoi(insSplit[1])
+
+		fmt.Printf("current aim: %d\n", submarine.aim)
+
+		if err != nil {
+			fmt.Println("Error when converting value to int: ", err)
+			continue
+		}
+
+		submarine.AimModeMove(dir, val)
+	}
+
+	fmt.Printf("depth: %d\n", submarine.depth)
+	fmt.Printf("position: %d\n", submarine.position)
+	fmt.Printf("result: %d\n", submarine.depth*submarine.position)
 }
 
 /*

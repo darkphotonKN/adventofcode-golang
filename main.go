@@ -1,12 +1,6 @@
 package main
 
-import (
-	"challenges/concurrency"
-)
-
-// adventofcode2021 "challenges/adventofcode/2021"
-// adventofcode2023 "challenges/adventofcode/2023"
-// algorithms "challenges/algorithms/sort"
+import adventofcode2021 "challenges/adventofcode/2021"
 
 func main() {
 	// ALGORITHMS
@@ -20,15 +14,24 @@ func main() {
 	/*
 		2021
 	*/
-	// adventofcode2021.Submarine()
-	// adventofcode2021.Dive()
-
+	// adventofcode2021.Submarine() day one
+	// adventofcode2021.Dive() // day two
+	adventofcode2021.DivePartTwo() // day two
 	/*
 		2023
 	*/
-	// adventofcode2023.Trebuchet()
+	// adventofcode2023.Trebuchet() // day one
 
 	// CONCURRENCY
-	concurrency.TreasureHunt()
+	// concurrency.TreasureHunt()
+	// concurrency.SimpleExample()
+	// concurrency.RunCrawler()
+	// concurrency.FileTextSearch()
+
+	// TOOLS
+	// filestream.RunFileStream()
+
+	// EXPERIMENTS
+	// experiments.RunRobotBuilder()
 
 }
