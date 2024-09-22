@@ -1,6 +1,8 @@
 package main
 
-import adventofcode2021 "challenges/adventofcode/2021"
+import (
+	"challenges/concurrency"
+)
 
 func main() {
 	// ALGORITHMS
@@ -16,7 +18,7 @@ func main() {
 	*/
 	// adventofcode2021.Submarine() day one
 	// adventofcode2021.Dive() // day two
-	adventofcode2021.DivePartTwo() // day two
+	// adventofcode2021.DivePartTwo() // day two
 	/*
 		2023
 	*/
@@ -27,6 +29,7 @@ func main() {
 	// concurrency.SimpleExample()
 	// concurrency.RunCrawler()
 	// concurrency.FileTextSearch()
+	concurrency.AdvancedConcurrency()
 
 	// TOOLS
 	// filestream.RunFileStream()
