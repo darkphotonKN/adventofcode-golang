@@ -29,7 +29,8 @@ func main() {
 	// concurrency.SimpleExample()
 	// concurrency.RunCrawler()
 	// concurrency.FileTextSearch()
-	concurrency.AdvancedConcurrency()
+	// concurrency.AdvancedConcurrency()
+	concurrency.RunRequestThrottle()
 
 	// TOOLS
 	// filestream.RunFileStream()
