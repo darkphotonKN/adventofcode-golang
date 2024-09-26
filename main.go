@@ -1,7 +1,7 @@
 package main
 
 import (
-	"challenges/concurrency"
+	designpatterns "challenges/design-patterns"
 )
 
 func main() {
@@ -30,12 +30,15 @@ func main() {
 	// concurrency.RunCrawler()
 	// concurrency.FileTextSearch()
 	// concurrency.AdvancedConcurrency()
-	concurrency.RunRequestThrottle()
+	// concurrency.RunRequestThrottle()
 
 	// TOOLS
 	// filestream.RunFileStream()
 
 	// EXPERIMENTS
 	// experiments.RunRobotBuilder()
+
+	// DESIGN PATTERNS
+	designpatterns.SingleResponsibilityPrinciple()
 
 }
