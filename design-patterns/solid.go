@@ -175,7 +175,28 @@ func DependencyInjectionPrinciple() {
 
 	// perform investigation with a High level module that BREAKS DIP
 	research := Research{relationships: relationships}
-	research.Investigate()
+	matchingRelations, err := research.Investigate(Child)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, relation := range matchingRelations {
+		fmt.Printf("\n%v is a %s of %v\n\n", relation.from.name, relation.relationship, relation.to.name)
+	}
+
+	// CONFORMING to DIP
+	// perform investigation with a HLM that DOES NOT BREAK DIP
+	researchWithDIP := ResearchFollowingDIP{}
+	matches, err := researchWithDIP.Investigate(relationships.relations, Parent)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, relation := range matches {
+		fmt.Printf("\n%v WITH DIP is a %s of %v\n\n", relation.from.name, relation.relationship, relation.to.name)
+	}
 
 }
 
@@ -223,11 +244,55 @@ type Research struct {
 	relationships Relationships
 }
 
-func (r *Research) Investigate() {
+func (r *Research) Investigate(relationType Relationship) ([]Info, error) {
+	var matchingRelations []Info
 	// relations is accessed in the tight bind to Research
 	// e.g. this would error if LLM changes relations to anything but a slice
 	for _, relation := range r.relationships.relations {
 		// do stuff with relations
-		fmt.Printf("\n%v is a %s of %v\n\n", relation.from.name, relation.relationship, relation.to.name)
+		if relation.relationship == relationType {
+			matchingRelations = append(matchingRelations, relation)
+		}
 	}
+
+	// nothing found
+	if len(matchingRelations) == 0 {
+		return matchingRelations, fmt.Errorf("No matching relations")
+
+	}
+
+	return matchingRelations, nil
+}
+
+// MAINTAINING the principles of DI, HLM and LLM only depending on abstractions
+type RelationshipBrowser interface {
+	Investigate(relations []Info, relationshipType Relationship) ([]Info, error)
+}
+
+type ResearchFollowingDIP struct {
+}
+
+func NewResearchFollowingDIP() RelationshipBrowser {
+	return &ResearchFollowingDIP{}
+}
+
+// ONE general implentation of this, not tied to RelationshipBrowser
+func (r *ResearchFollowingDIP) Investigate(relations []Info, relationType Relationship) ([]Info, error) {
+	var matchingRelations []Info
+	// relations is accessed in the tight bind to Research
+	// e.g. this would error if LLM changes relations to anything but a slice
+	for _, relation := range relations {
+		// do stuff with relations
+		if relation.relationship == relationType {
+			matchingRelations = append(matchingRelations, relation)
+		}
+	}
+
+	// nothing found
+	if len(matchingRelations) == 0 {
+		return matchingRelations, fmt.Errorf("No matching relations")
+
+	}
+
+	return matchingRelations, nil
 }
