@@ -138,6 +138,7 @@ func (f *FileManager3) SaveToFile3(entries []string) {
 }
 
 // Journal method that saves its state via FileManager
+// We inject the relation here as an argument, not from embedding in the base type.
 func (j *Journal) Save(journalFileManager *FileManager3) {
 	journalFileManager.SaveToFile3(j.entries)
 }
@@ -151,4 +152,82 @@ func TestCorrectJournalFollowingSRP3() {
 	// Injecting FileManager to save the journal
 	fileManager := NewFileManager3()
 	journal.Save(fileManager) // Journal just calls the FileManager to save itself
+}
+
+/**
+* Dependency Injection Principle
+**/
+
+func DependencyInjectionPrinciple() {
+	fmt.Println("Dependency Injection Principle")
+
+	// breaking DIP
+	relationships := Relationships{}
+
+	john := Person{name: "John"}
+	johnJr := Person{name: "John Jr."}
+
+	michael := Person{name: "Michael"}
+	jorge := Person{name: "Jorge"}
+
+	relationships.AddParentAndChild(&john, &johnJr)
+	relationships.AddParentAndChild(&michael, &jorge)
+
+	// perform investigation with a High level module that BREAKS DIP
+	research := Research{relationships: relationships}
+	research.Investigate()
+
+}
+
+type Relationship string
+
+const (
+	Parent  Relationship = "parent"
+	Child   Relationship = "child"
+	Sibling Relationship = "sibling"
+)
+
+type Person struct {
+	name string
+}
+
+// modelling relationship between two people
+type Info struct {
+	from         *Person
+	relationship Relationship
+	to           *Person
+}
+
+type Relationships struct {
+	relations []Info
+}
+
+func (r *Relationships) AddParentAndChild(parent, child *Person) {
+	r.relations = append(r.relations, Info{
+		from:         parent,
+		relationship: Parent,
+		to:           child,
+	})
+	r.relations = append(r.relations, Info{
+		from:         child,
+		relationship: Child,
+		to:           parent,
+	})
+}
+
+// BREAKING dependency inversion principle, HLM depending on LLM
+type Research struct {
+	// relations is tightly bound to Research
+	// this would break if the LLM decides to change its implementation
+	// e.g. change the slice to a Database
+	relationships Relationships
+}
+
+func (r *Research) Investigate() {
+	// relations is accessed in the tight bind to Research
+	// e.g. this would error if LLM changes relations to anything but a slice
+	for _, relation := range r.relationships.relations {
+		// do stuff with relations
+		fmt.Printf("\n%v is a %s of %v\n\n", relation.from.name, relation.relationship, relation.to.name)
+	}
 }

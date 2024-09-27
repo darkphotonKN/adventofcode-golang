@@ -39,6 +39,7 @@ func main() {
 	// experiments.RunRobotBuilder()
 
 	// DESIGN PATTERNS
-	designpatterns.SingleResponsibilityPrinciple()
+	// designpatterns.SingleResponsibilityPrinciple()
+	designpatterns.DependencyInjectionPrinciple()
 
 }
