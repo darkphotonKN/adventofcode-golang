@@ -22,6 +22,7 @@ func SingleResponsibilityPrinciple() {
 	}
 
 	fmt.Printf("\nEntries: %v\n\n", journal.entries)
+
 }
 
 type Journal struct {
@@ -186,7 +187,8 @@ func DependencyInjectionPrinciple() {
 	}
 
 	// CONFORMING to DIP
-	// perform investigation with a HLM that DOES NOT BREAK DIP
+
+	// 1. perform investigation with a HLM that DOES NOT BREAK DIP - using constructor
 	researchWithDIP := ResearchFollowingDIP{}
 	matches, err := researchWithDIP.Investigate(relationships.relations, Parent)
 
@@ -198,6 +200,8 @@ func DependencyInjectionPrinciple() {
 		fmt.Printf("\n%v WITH DIP is a %s of %v\n\n", relation.from.name, relation.relationship, relation.to.name)
 	}
 
+	// 2. without using constructor
+	TestDIPWithoutConstructor()
 }
 
 type Relationship string
@@ -266,6 +270,7 @@ func (r *Research) Investigate(relationType Relationship) ([]Info, error) {
 
 // MAINTAINING the principles of DI, HLM and LLM only depending on abstractions
 type RelationshipBrowser interface {
+	// defines the shape of input and output, not the details
 	Investigate(relations []Info, relationshipType Relationship) ([]Info, error)
 }
 
@@ -278,6 +283,74 @@ func NewResearchFollowingDIP() RelationshipBrowser {
 
 // ONE general implentation of this, not tied to RelationshipBrowser
 func (r *ResearchFollowingDIP) Investigate(relations []Info, relationType Relationship) ([]Info, error) {
+	var matchingRelations []Info
+	// relations is accessed in the tight bind to Research
+	// e.g. this would error if LLM changes relations to anything but a slice
+	for _, relation := range relations {
+		// do stuff with relations
+		if relation.relationship == relationType {
+			matchingRelations = append(matchingRelations, relation)
+		}
+	}
+
+	// nothing found
+	if len(matchingRelations) == 0 {
+		return matchingRelations, fmt.Errorf("No matching relations")
+
+	}
+
+	return matchingRelations, nil
+}
+
+// Solution without using constructors
+type ResearchWithInterface struct {
+	// only an interface, so no tight binding
+	browser RelationshipBrowser
+}
+
+type Browser struct {
+}
+
+// func (r *ResearchWithInterface) Investigate() {
+// 	relationships := Relationships{}
+// 	relationships.AddParentAndChild(&Person{name: "Hiroshi"}, &Person{name: "Bob"})
+// 	relationships.relations = append(relationships.relations, Info{
+// 		from:         &Person{name: "Ellie"},
+// 		relationship: Child,
+// 		to:           &Person{name: "Joel"},
+// 	})
+// 	relationships.AddParentAndChild(&Person{name: "John"}, &Person{name: "John Jr"})
+//
+// 	r.browser.Investigate(relationships.relations, Parent)
+// }
+
+// running solution without constructor
+func TestDIPWithoutConstructor() {
+	fmt.Println("Test DIP without constructor")
+
+	relationships := Relationships{}
+	relationships.AddParentAndChild(&Person{name: "Hiroshi"}, &Person{name: "Bob"})
+	relationships.relations = append(relationships.relations, Info{
+		from:         &Person{name: "Ellie"},
+		relationship: Child,
+		to:           &Person{name: "Joel"},
+	})
+	relationships.AddParentAndChild(&Person{name: "John"}, &Person{name: "John Jr"})
+
+	research := ResearchWithInterface{
+		browser: &Browser{},
+	}
+
+	results, err := research.browser.Investigate(relationships.relations, Child)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Printf("Final results: %+v\n", results)
+}
+
+func (b *Browser) Investigate(relations []Info, relationType Relationship) ([]Info, error) {
 	var matchingRelations []Info
 	// relations is accessed in the tight bind to Research
 	// e.g. this would error if LLM changes relations to anything but a slice
