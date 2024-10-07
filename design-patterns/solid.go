@@ -156,10 +156,9 @@ func TestCorrectJournalFollowingSRP3() {
 }
 
 /**
-* Dependency Injection Principle
+* Dependency Inversion Principle
 **/
-
-func DependencyInjectionPrinciple() {
+func DependencyInversionPrinciple() {
 	fmt.Println("Dependency Injection Principle")
 
 	// breaking DIP
@@ -369,3 +368,119 @@ func (b *Browser) Investigate(relations []Info, relationType Relationship) ([]In
 
 	return matchingRelations, nil
 }
+
+// MORE EXAMPLES OF DIP
+
+// -- Using Constructor --
+
+type Employee struct {
+	id    uint
+	name  string
+	email string
+}
+
+type EmployeeManager struct {
+	employees []Employee
+}
+
+func (e *EmployeeManager) addPerson(person Employee) []Employee {
+	e.employees = append(e.employees, person)
+	return e.employees
+}
+
+func (e *EmployeeManager) deletePerson(id uint) error {
+	updatedEmployees := make([]Employee, len(e.employees))
+
+	found := false
+
+	for _, employee := range e.employees {
+		if employee.id == id {
+			found = true
+		} else {
+			updatedEmployees = append(updatedEmployees, employee)
+		}
+	}
+
+	// still not found, return error
+	if !found {
+		return fmt.Errorf("Employee with id %d was not found", id)
+	}
+
+	e.employees = updatedEmployees
+	return nil
+}
+
+func NewEmployeeManager() PersonellManager[Employee] {
+	return &EmployeeManager{}
+}
+
+type PersonellManager[T any] interface {
+	addPerson(person T) []T
+	deletePerson(id uint) error
+}
+
+// -- Without Using Constructor --
+
+// Define an interface for the employee browser.
+type EmployeeBrowser interface {
+	// InvestigateEmployee provides the flexibility to look for employees by any criteria
+	InvestigateEmployee(employeeList []Employee2, id uint) (*Employee2, error)
+}
+
+// Employee is our entity type.
+type Employee2 struct {
+	id    uint
+	name  string
+	email string
+}
+
+// EmployeeRepository implements the EmployeeBrowser interface.
+type EmployeeRepository struct {
+	employees []Employee2
+}
+
+// InvestigateEmployee implements the EmployeeBrowser interface, allowing
+// us to investigate the employee list by a specific condition (e.g., by id).
+func (r *EmployeeRepository) InvestigateEmployee(employeeList []Employee2, id uint) (*Employee2, error) {
+	for _, emp := range employeeList {
+		if emp.id == id {
+			return &emp, nil
+		}
+	}
+	return nil, fmt.Errorf("Employee with id %d not found", id)
+}
+
+// ResearchWithInterface depends on the abstraction (EmployeeBrowser) instead of a concrete implementation.
+type ResearchWithInterface2 struct {
+	browser EmployeeBrowser
+}
+
+// InvestigateEmployeeByID uses the EmployeeBrowser abstraction to search for an employee by id.
+func (r *ResearchWithInterface2) InvestigateEmployeeByID(id uint) {
+	employee, err := r.browser.InvestigateEmployee(r.browser.(*EmployeeRepository).employees, id)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("Found Employee: %+v\n", employee)
+}
+
+func main() {
+	// Set up the EmployeeRepository with a few employees.
+	repo := &EmployeeRepository{
+		employees: []Employee2{
+			{id: 1, name: "John", email: "john@example.com"},
+			{id: 2, name: "Jane", email: "jane@example.com"},
+		},
+	}
+
+	// Set up the high-level module ResearchWithInterface which uses the abstraction EmployeeBrowser.
+	research := ResearchWithInterface2{browser: repo}
+
+	// Investigate an employee by id using the interface.
+	research.InvestigateEmployeeByID(1)
+}
+
+/**
+* Interface Segregation Principle
+**/

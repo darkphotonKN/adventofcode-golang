@@ -40,6 +40,7 @@ func main() {
 
 	// DESIGN PATTERNS
 	// designpatterns.SingleResponsibilityPrinciple()
-	designpatterns.DependencyInjectionPrinciple()
+	// designpatterns.DependencyInversionPrinciple()
+	designpatterns.TestFactoryGenerator()
 
 }
