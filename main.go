@@ -1,8 +1,8 @@
 package main
 
-import (
-	designpatterns "challenges/design-patterns"
-)
+import search "challenges/algorithms/trees"
+
+// designpatterns "challenges/design-patterns"
 
 func main() {
 	// ALGORITHMS
@@ -11,6 +11,7 @@ func main() {
 	// numbers := []int{212, 18, 110, 454, 34, 20, 110}
 	// target := 18
 	// search.BinarySearch(numbers, target)
+	search.RunPreOrderBinarySearch()
 
 	// ADVENT OF CODE
 	/*
@@ -41,6 +42,7 @@ func main() {
 	// DESIGN PATTERNS
 	// designpatterns.SingleResponsibilityPrinciple()
 	// designpatterns.DependencyInversionPrinciple()
-	designpatterns.TestFactoryGenerator()
+	// designpatterns.TestFactoryGenerator()
+	// designpatterns.TestStrategyPattern()
 
 }

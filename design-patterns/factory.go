@@ -45,7 +45,6 @@ func NewRobotWithIntelligence(name string, age uint) WithIntelligence {
 		name: name,
 		age:  age,
 	}
-
 }
 
 /**
@@ -69,7 +68,7 @@ func NewWorkerFactory(position string, annualIncome int) func(name string) *Work
 	}
 }
 
-// usage
+// Usage
 func TestFactoryGenerator() {
 	// fixes created workers with this factory function to always be mcdonalds related with
 	// the same salary
