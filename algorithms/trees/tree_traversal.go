@@ -31,11 +31,11 @@ func walk(curr *TreeNode, path []int) []int {
 		return path
 	}
 
-	// "visit" current node
-	path = append(path, curr.value)
-
 	// recurse left, update result
 	path = walk(curr.left, path)
+
+	// "visit" current node
+	path = append(path, curr.value)
 
 	// recurse right, update result
 	path = walk(curr.right, path)
