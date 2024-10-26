@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+// ohboyohboy
+
 func TestStrategyPattern() {
 	fmt.Println("Strategy Pattern")
 
