@@ -4,6 +4,11 @@ package search
 * Breadth First Search
 **/
 
+type QNode[T any] struct {
+	next  *QNode[T]
+	value T
+}
+
 // Queue Implementation
 type Queue struct {
 }
