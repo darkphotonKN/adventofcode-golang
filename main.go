@@ -1,6 +1,9 @@
 package main
 
-import search "challenges/algorithms/trees"
+import (
+	search "challenges/algorithms/trees"
+	"challenges/practice"
+)
 
 // designpatterns "challenges/design-patterns"
 
@@ -45,4 +48,6 @@ func main() {
 	// designpatterns.TestFactoryGenerator()
 	// designpatterns.TestStrategyPattern()
 
+	// PRACTICE
+	practice.Run()
 }
