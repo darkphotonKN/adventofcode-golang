@@ -1,8 +1,7 @@
 package main
 
 import (
-	search "challenges/algorithms/trees"
-	"challenges/practice"
+	adventofcode2024 "challenges/adventofcode/2024"
 )
 
 // designpatterns "challenges/design-patterns"
@@ -14,7 +13,8 @@ func main() {
 	// numbers := []int{212, 18, 110, 454, 34, 20, 110}
 	// target := 18
 	// search.BinarySearch(numbers, target)
-	search.RunPreOrderBinarySearch()
+	// // search.RunPreOrderBinarySearch()
+	// datastructure.RunQueue()
 
 	// ADVENT OF CODE
 	/*
@@ -27,6 +27,10 @@ func main() {
 		2023
 	*/
 	// adventofcode2023.Trebuchet() // day one
+	/*
+		2024
+	*/
+	adventofcode2024.DayOneHistorianHysteria()
 
 	// CONCURRENCY
 	// concurrency.TreasureHunt()
@@ -49,5 +53,5 @@ func main() {
 	// designpatterns.TestStrategyPattern()
 
 	// PRACTICE
-	practice.Run()
+	// practice.Run()
 }

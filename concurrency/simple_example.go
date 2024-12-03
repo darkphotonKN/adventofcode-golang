@@ -20,8 +20,8 @@ func SimpleExample() {
 
 	go listenToLoggers()
 
-	wg.Wait() // wait for 2 done's before unlocking
 	close(messageChan)
+	wg.Wait() // wait for 2 done's before unlocking
 
 	end := time.Since(start)
 	fmt.Printf("final time: %v\n", end)
@@ -46,7 +46,11 @@ func Logger2(wg *sync.WaitGroup) {
 }
 
 func listenToLoggers() {
-	for message := range messageChan {
-		fmt.Println(message)
+	for {
+		msgRecieved := <-messageChan
+
+		fmt.Println(msgRecieved)
+
+		continue
 	}
 }

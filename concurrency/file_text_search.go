@@ -11,10 +11,8 @@ func NewFileSearchManager(filepath string) *fileSearchManager {
 }
 
 func (fs *fileSearchManager) search(target string) {
-
 }
 
 func FileTextSearch() {
-
 	fmt.Println("Text search")
 }

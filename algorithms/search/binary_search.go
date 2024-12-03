@@ -9,6 +9,7 @@ func BinarySearch(numbers []int, target int) bool {
 	lowIndex := 0
 	upperIndex := len(numbers) - 1
 
+	return
 }
 
 func LinearSearch(numbers []int, target int) bool {
