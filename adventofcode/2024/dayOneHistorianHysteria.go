@@ -19,6 +19,8 @@ import (
 3   9
 3   3
 
+PART 1
+
 Within each pair, figure out how far apart the two numbers are; you'll need to add up all of those distances.
 For example, if you pair up a 3 from the left list with a 7 from the right list, the distance apart is 4; if you pair up a 9 with a 3, the distance apart is 6.
 
@@ -33,6 +35,8 @@ Finally, the largest number in the left list is 4, while the largest number in t
 To find the total distance between the left list and the right list, add up the distances between all of the pairs you found.
 
 In the example above, this is 2 + 1 + 0 + 1 + 2 + 5, a total distance of 11!
+
+PART 2
 */
 
 func DayOneHistorianHysteria() {
@@ -67,6 +71,11 @@ func DayOneHistorianHysteria() {
 	}
 
 	fmt.Println("totalDistance was:", int(totalDistance))
+
+	// part two, count similar score
+	similarityScore := CalculateSimilarityScore(leftList, rightList)
+
+	fmt.Println("similarityScore", similarityScore)
 }
 
 func splitLists(data []string) ([]int, []int, error) {
@@ -98,3 +107,53 @@ func splitLists(data []string) ([]int, []int, error) {
 
 	return leftList, rightList, nil
 }
+
+func CalculateSimilarityScore(left, right []int) int {
+	result := 0
+
+	for _, leftNumber := range left {
+		count := 0
+
+		for _, rightNumber := range right {
+			if leftNumber == rightNumber {
+				count++
+			}
+		}
+
+		// add the result at the end
+		result += leftNumber * count
+	}
+
+	return result
+}
+
+/*
+--- Part Two ---
+Your analysis only confirmed what everyone feared: the two lists of location IDs are indeed very different.
+
+Or are they?
+
+The Historians can't agree on which group made the mistakes or how to read most of the Chief's handwriting, but in the commotion you notice an interesting detail: a lot of location IDs appear in both lists! Maybe the other numbers aren't location IDs at all but rather misinterpreted handwriting.
+
+This time, you'll need to figure out exactly how often each number from the left list appears in the right list. Calculate a total similarity score by adding up each number in the left list after multiplying it by the number of times that number appears in the right list.
+
+
+3   4
+4   3
+2   5
+1   3
+3   9
+3   3
+
+For these example lists, here is the process of finding the similarity score:
+
+The first number in the left list is 3. It appears in the right list three times, so the similarity score increases by 3 * 3 = 9.
+The second number in the left list is 4. It appears in the right list once, so the similarity score increases by 4 * 1 = 4.
+The third number in the left list is 2. It does not appear in the right list, so the similarity score does not increase (2 * 0 = 0).
+The fourth number, 1, also does not appear in the right list.
+The fifth number, 3, appears in the right list three times; the similarity score increases by 9.
+The last number, 3, appears in the right list three times; the similarity score again increases by 9.
+
+So, for these example lists, the similarity score at the end of this process is 31 (9 + 4 + 0 + 0 + 9 + 9).
+
+*/
