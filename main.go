@@ -30,7 +30,8 @@ func main() {
 	/*
 		2024
 	*/
-	adventofcode2024.DayOneHistorianHysteria()
+	// adventofcode2024.DayOneHistorianHysteria()
+	adventofcode2024.DayTwo()
 
 	// CONCURRENCY
 	// concurrency.TreasureHunt()
