@@ -81,15 +81,7 @@ func validateLevels(levels []string) bool {
 	// iterate over each level, removing it before checking safety, NOTE: but time complexity O(n^2)
 	for indexToIgnore := range levelsNum {
 
-		// defaults
-		allIncreasing := true
-		allDecreasing := true
-
-		var prevLevel int
-
 		var testLevels []int
-
-		safe := true
 
 		// filter one level per iteration (Part 2)
 		for index, level := range levelsNum {
@@ -98,88 +90,106 @@ func validateLevels(levels []string) bool {
 			}
 		}
 
-		// iterate through entire thing first time through too
+		safe := checkSafety(testLevels)
 
-		// iterate through the filtered levels
-		for index, level := range testLevels {
-			fmt.Printf("\nIterating Levels: %v\n\n", testLevels)
-			fmt.Printf("\nCurrent Level: %d\n\n", level)
-
-			// skip the first level
-			if index == 0 {
-				prevLevel = level
-				continue
-			}
-
-			// --- Check Each Rule ---
-			// compare with previous and check if any of the defaults expectations are broken ---
-
-			// -- Increasing Rule --
-			if prevLevel < level {
-				fmt.Printf("\nLevels Still INCREASING\n\n")
-				// it must mean all decreasing is now not true, set it as so
-				allDecreasing = false
-			}
-
-			// -- Decreasing Rule --
-			if prevLevel > level {
-				fmt.Printf("\nLevels Still DECREASING\n\n")
-
-				// it must mean all increasing is now not true, set it as so
-				allIncreasing = false
-			}
-
-			if allIncreasing {
-				// check if increment is too large
-				difference := math.Abs(float64(prevLevel) - float64(level))
-
-				fmt.Println("Difference was:", difference)
-
-				if difference == 0 || difference > 3 {
-					fmt.Println("This level is unsafe")
-					// unsafe
-					safe = false
-					break
-				}
-			}
-
-			if allDecreasing {
-				// check if decrement is too large
-				difference := math.Abs(float64(prevLevel) - float64(level))
-
-				fmt.Println("Difference was:", difference)
-
-				if difference == 0 || difference > 3 {
-					fmt.Println("This level is unsafe")
-					// unsafe
-					safe = false
-					break
-				}
-			}
-
-			// check if any of the rules are still holding
-			if !allDecreasing && !allIncreasing {
-				fmt.Println("Both all increasing and decreasing have failed, level unsafe!")
-				safe = false
-				break
-			}
-
-			prevLevel = level
-		}
-
-		// level safe return true as only one set of levels need to be safe
-		// else continue to next set of levels
 		if safe {
 			return true
 		}
-
 	}
 
 	// didnt pass all checks, return false
 	return false
 }
 
+func checkSafety(levels []int) bool {
+	// defaults
+	allIncreasing := true
+	allDecreasing := true
+
+	var prevLevel int
+
+	safe := true
+
+	// iterate through entire thing first time through too
+
+	// iterate through the filtered levels
+	for index, level := range levels {
+		fmt.Printf("\nIterating Levels: %v\n\n", levels)
+		fmt.Printf("\nCurrent Level: %d\n\n", level)
+
+		// skip the first level
+		if index == 0 {
+			prevLevel = level
+			continue
+		}
+
+		// --- Check Each Rule ---
+		// compare with previous and check if any of the defaults expectations are broken ---
+
+		// -- Increasing Rule --
+		if prevLevel < level {
+			fmt.Printf("\nLevels Still INCREASING\n\n")
+			// it must mean all decreasing is now not true, set it as so
+			allDecreasing = false
+		}
+
+		// -- Decreasing Rule --
+		if prevLevel > level {
+			fmt.Printf("\nLevels Still DECREASING\n\n")
+
+			// it must mean all increasing is now not true, set it as so
+			allIncreasing = false
+		}
+
+		if allIncreasing {
+			// check if increment is too large
+			difference := math.Abs(float64(prevLevel) - float64(level))
+
+			fmt.Println("Difference was:", difference)
+
+			if difference == 0 || difference > 3 {
+				fmt.Println("This level is unsafe")
+				// unsafe
+				safe = false
+				break
+			}
+		}
+
+		if allDecreasing {
+			// check if decrement is too large
+			difference := math.Abs(float64(prevLevel) - float64(level))
+
+			fmt.Println("Difference was:", difference)
+
+			if difference == 0 || difference > 3 {
+				fmt.Println("This level is unsafe")
+				// unsafe
+				safe = false
+				break
+			}
+		}
+
+		// check if any of the rules are still holding
+		if !allDecreasing && !allIncreasing {
+			fmt.Println("Both all increasing and decreasing have failed, level unsafe!")
+			safe = false
+			break
+		}
+
+		prevLevel = level
+	}
+
+	// level safe return true as only one set of levels need to be safe
+	// else continue to next set of levels
+	if safe {
+		return true
+	}
+
+	return false
+}
+
 /*
+
 
 --- Part Two ---
 The engineers are surprised by the low number of safe reports until they realize they forgot to tell you about the Problem Dampener.
