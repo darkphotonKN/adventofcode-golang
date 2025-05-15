@@ -190,7 +190,6 @@ func checkSafety(levels []int) bool {
 
 /*
 
-
 --- Part Two ---
 The engineers are surprised by the low number of safe reports until they realize they forgot to tell you about the Problem Dampener.
 

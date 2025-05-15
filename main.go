@@ -1,7 +1,7 @@
 package main
 
 import (
-	adventofcode2024 "challenges/adventofcode/2024"
+	questions "challenges/questions/leetcode"
 )
 
 // designpatterns "challenges/design-patterns"
@@ -16,7 +16,9 @@ func main() {
 	// // search.RunPreOrderBinarySearch()
 	// datastructure.RunQueue()
 
-	// ADVENT OF CODE
+	// --- Practice Questions ---
+
+	// -- ADVENT OF CODE --
 	/*
 		2021
 	*/
@@ -31,7 +33,11 @@ func main() {
 		2024
 	*/
 	// adventofcode2024.DayOneHistorianHysteria()
-	adventofcode2024.DayTwo()
+	// adventofcode2024.DayTwo()
+
+	// -- Leet Code --
+	leetCode := questions.NewLeetCode()
+	leetCode.Run()
 
 	// CONCURRENCY
 	// concurrency.TreasureHunt()
