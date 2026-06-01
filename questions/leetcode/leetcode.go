@@ -10,7 +10,9 @@ func NewLeetCode() *LeetCode {
 
 func (c *LeetCode) Run() {
 
-	result := c.findMaxAverage([]int{1, 12, -5, -6, 50, 3, 10}, 4)
+	result := c.groupAnagrams([]string{
+		"eat", "tea", "tan", "ate", "nat", "bat",
+	})
 
 	fmt.Printf("\nResult was %+v\n\n", result)
 

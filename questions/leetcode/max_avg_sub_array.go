@@ -22,6 +22,10 @@ n == nums.length
 -104 <= nums[i] <= 104
 */
 
+func findMaxAverge(nums []int) {
+
+}
+
 func (c *LeetCode) findMaxAverage(nums []int, k int) float64 {
 	// find first average
 	var maxAverage float64

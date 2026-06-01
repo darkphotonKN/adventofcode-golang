@@ -1,8 +1,9 @@
 package main
 
 import (
-	questions "challenges/questions/leetcode"
+	"challenges/practice"
 )
+
 
 // designpatterns "challenges/design-patterns"
 
@@ -36,8 +37,8 @@ func main() {
 	// adventofcode2024.DayTwo()
 
 	// -- Leet Code --
-	leetCode := questions.NewLeetCode()
-	leetCode.Run()
+	// leetCode := questions.NewLeetCode()
+	// leetCode.Run()
 
 	// CONCURRENCY
 	// concurrency.TreasureHunt()
@@ -60,5 +61,7 @@ func main() {
 	// designpatterns.TestStrategyPattern()
 
 	// PRACTICE
-	// practice.Run()
+	practice.Run()
+	// Sample transactions
+	// questions.TestFlagged()
 }
