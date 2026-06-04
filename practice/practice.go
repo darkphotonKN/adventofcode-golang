@@ -11,11 +11,15 @@ type User struct {
 }
 
 func Run() {
-	res := ThreeSum([]int{-1, 0, 1, 2, -1, -4})
+	res := ThreeSum([]int{0, 0, 0, 0})
 	fmt.Printf("\nThree Sum Result: %+v\n\n", res)
+	res2 := ThreeSum([]int{-1, 0, 1, 2, -1, -4})
+	fmt.Printf("\nThree Sum Result 2: %+v\n\n", res2)
+
+	res3 := ThreeSum([]int{-1, -1, -1, 0, 0, 0, 1, 1, 1})
+	fmt.Printf("\nThree Sum Result 3: %+v\n\n", res3)
 
 	numbers := []int{20, 7, 10, 3, 4, 3, 14, 7, 20, 3, 15, 4}
-
 	fmt.Println("Currying Review - Sorted list:", sortArrayEvenAndOdd(numbers))
 
 	// updating pointer of slices
@@ -87,7 +91,7 @@ func GroupAnagrams(words []string) [][]string {
 	return res
 }
 
-// Given an integer array nums, return all unique triplets [nums[i], nums[j], nums[k]] where the three indices are distinct and the values sum to 0. The result must contain no duplicate triplets.
+// Given an integer array nums, return jall unique triplets [nums[i], nums[j], nums[k]] where the three indices are distinct and the values sum to 0. The result must contain no duplicate triplets.
 // Input:  [-1, 0, 1, 2, -1, -4]
 // Output: [[-1, -1, 2], [-1, 0, 1]]
 //
@@ -98,57 +102,69 @@ func GroupAnagrams(words []string) [][]string {
 // Output: []
 // Constraints: 3 ≤ len(nums) ≤ 3000, -10^5 ≤ nums[i] ≤ 10^5.
 
+// this two pointer solution space complexity is O(1)
 func ThreeSum(nums []int) [][]int {
+
 	res := make([][]int, 0)
 
-	// sort array O(log n)
+	// sort with O(log n) cost but allows for the solution
 	slices.Sort(nums)
 
-	// loop through ascending order
-	triplet := make([]int, 0, 3) // initalize first triplet
-	leftIndex := 1
-	rightIndex := len(nums) - 1
+	// two babies, one pointer from the left most and one on the right most converging
 
-	for curr := 0; curr < len(nums); curr++ {
-		// pointer going forward
-		leftNum := nums[leftIndex]
-		rightNum := nums[rightIndex]
-		currNum := nums[curr]
+	// outer loop to find the target on each iteration
+	// only check up to -2 as we'll nevber need to check the final two or one number
+	// final 3 numbers would have been the final 3 numbers to check
+	for i := 0; i < len(nums)-2; i++ {
 
-		// add all 3 and check for sum
-		sum := currNum + leftNum + rightNum
-		fmt.Printf("\nsum this iteration: %d\n\n", sum)
-		if sum == 0 {
-			// add to triplet
-			triplet = append(triplet, currNum)
-			triplet = append(triplet, leftNum)
-			triplet = append(triplet, rightNum)
+		// every iteration we reset these indexes
+		// we never check whats behind us, left most index and right most index converge from i ONWARDS.
+		// anything from before would have been tried already, as they were all i's that matched with all other combinations.
+		leftBabyIndex := i + 1          // only from i onward, explained above
+		rightBabyIndex := len(nums) - 1 // always start from the final index so we get all combinations
 
-			// current triplet finished, add to result
-			res = append(res, triplet)
-
-			// initialize a fresh one
-			triplet = make([]int, 0, 3)
-		}
-
-		// check the direction of the miss, is it lower than 0 or higher than 0, to change the direction we're scanning for a match
-		if sum > 0 {
-			if leftIndex > 0 {
-				leftIndex--
-			}
-			if rightIndex > 0 {
-				rightIndex--
-			}
+		// skip if same as previous i, as it would net the same findings
+		if i > 0 && nums[i] == nums[i-1] {
 			continue
 		}
 
-		// else its smaller than 0, so increment to attempt to get closer to 0
-		if leftIndex < len(nums)-1 {
-			leftIndex++
-		}
+		// also: make sure that left baby and right baby don't overlap
+		for leftBabyIndex < rightBabyIndex {
 
-		if rightIndex < len(nums)-1 {
-			rightIndex++
+			// calculate to see if triplet's sum meets target
+			sum := nums[leftBabyIndex] + nums[rightBabyIndex] + nums[i]
+
+			if sum == 0 {
+				// found, save in result
+				triplet := []int{nums[leftBabyIndex], nums[rightBabyIndex], nums[i]}
+				res = append(res, triplet)
+
+				// move both pointers to keep finding more combinations
+				leftBabyIndex++
+				rightBabyIndex--
+
+				// but skip the same numbers if they're the same after incrementing
+				for leftBabyIndex < rightBabyIndex && nums[leftBabyIndex] == nums[leftBabyIndex-1] {
+					leftBabyIndex++
+				}
+
+				for leftBabyIndex < rightBabyIndex && nums[rightBabyIndex] == nums[rightBabyIndex+1] {
+					rightBabyIndex--
+				}
+				continue
+			}
+
+			// if sum not the target, we move only the pointer that makes sense and try again
+
+			// sum too high remove the right index down
+			if sum > 0 && rightBabyIndex > leftBabyIndex {
+				rightBabyIndex--
+			}
+
+			// sum too low remove the right index down
+			if sum < 0 && leftBabyIndex < rightBabyIndex {
+				leftBabyIndex++
+			}
 		}
 	}
 
