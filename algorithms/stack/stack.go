@@ -1,5 +1,7 @@
 package stack
 
+import "fmt"
+
 /*
 (LIFO) Last in first out container
 Push - add to the top
@@ -45,6 +47,40 @@ len(st) == 0               // empty check
 
 // KEY INSIGHT - SKIP CREATING A REAL STACK, JUST USE A SLICE AND PRETEND ITS A STACK
 
+// Stack groups together the stack-family practice problems so we can keep
+// adding methods to it as we work through each one.
+type Stack struct{}
+
+// Run is the entry point for the stack package. main.go calls this so we can
+// swap which algorithm package is being practiced just by changing one line.
+// Add new problems by writing a method on Stack and exercising it here.
+func Run() {
+	s := &Stack{}
+
+	fmt.Println("--- Valid Parenthesis ---")
+	for _, tc := range []struct {
+		input string
+		want  bool
+	}{
+		{"()", true},
+		{"()[]{}", true},
+		{"(]", false},
+		{"([)]", false},
+		{"{[]}", true},
+		{"", true},
+		{"[", false},
+		{"[(", false},
+		{"]", false},
+	} {
+		got := s.validParenthesis(tc.input)
+		status := "PASS"
+		if got != tc.want {
+			status = "FAIL"
+		}
+		fmt.Printf("[%s] validParenthesis(%q) = %v (want %v)\n", status, tc.input, got, tc.want)
+	}
+}
+
 // PRACTICE PROBLEMS
 
 // Valid Parenthesis
@@ -59,8 +95,57 @@ len(st) == 0               // empty check
 // ""       → true
 // "["      → false
 // "]"      → false
+//
+// Family 1 — Matching / nesting: the most recent unclosed opener must match
+// the next closer, so we push openers and pop when a closer arrives.
+// DONT CARE ABOUT MIRROR OF THE STRING HERE, only OPEN AND CLOSE ORDER MATTERS
+func (s *Stack) validParenthesis(str string) bool {
+	// use stack to find the most recently seen open
+	stack := make([]rune, 0)
 
-func validParenthesis(str string) bool {
+	matchingPair := map[rune]rune{
+		'}': '{',
+		']': '[',
+		')': '(',
+	}
 
-	return false
+	// iterate through the string, whenever we meet a opening brackets we need to check if the respective
+	// closing one is the same
+	for _, letter := range str {
+		expectedOpener, isCloser := matchingPair[letter]
+
+		if !isCloser {
+			// fmt.Printf("\nadding opener to stack: %q\n\n", letter)
+			// add to stack so we know the most recent closer needed
+			stack = append(stack, letter)
+			continue
+		}
+
+		// closer now, empty stack means no match found, closer met too early, return false
+		if len(stack) == 0 {
+			// fmt.Print("\nstack empty, not valid\n\n")
+			return false
+		}
+
+		// check if expected opener, keyed into map by the closer, matches the stack (most recently found
+		// opener)
+		mostRecentOpener := stack[len(stack)-1]
+
+		// fmt.Printf("\nchecking most recent opener from stack: %q   vs   expectedOpener: %q\n\n", mostRecentOpener, expectedOpener)
+
+		if expectedOpener != mostRecentOpener {
+			// end the check early, already know its false
+			return false
+		}
+
+		// shrink after successful match
+		stack = stack[:len(stack)-1]
+
+		// fmt.Printf("\nstack after shrinking: %v\n\n", stack)
+		// keep looping to check the whole string
+	}
+
+	// check if there are leftovers in stack (unmatched openers)
+
+	return len(stack) == 0
 }

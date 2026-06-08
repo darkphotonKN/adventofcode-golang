@@ -1,7 +1,8 @@
 package main
 
 import (
-	"challenges/practice"
+	"challenges/algorithms/stack"
+	// "challenges/practice"
 )
 
 
@@ -61,7 +62,10 @@ func main() {
 	// designpatterns.TestStrategyPattern()
 
 	// PRACTICE
-	practice.Run()
+	// practice.Run()
 	// Sample transactions
 	// questions.TestFlagged()
+
+	// ALGORITHM PRACTICE - swap which package's Run() is active to practice a different one
+	stack.Run()
 }
