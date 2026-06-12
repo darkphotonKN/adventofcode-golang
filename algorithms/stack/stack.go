@@ -1,6 +1,9 @@
 package stack
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 /*
 (LIFO) Last in first out container
@@ -57,7 +60,7 @@ type Stack struct{}
 func Run() {
 	s := &Stack{}
 
-	fmt.Println("--- Valid Parenthesis ---")
+	fmt.Printf("\n--- Valid Parenthesis ---\n\n")
 	for _, tc := range []struct {
 		input string
 		want  bool
@@ -78,6 +81,23 @@ func Run() {
 			status = "FAIL"
 		}
 		fmt.Printf("[%s] validParenthesis(%q) = %v (want %v)\n", status, tc.input, got, tc.want)
+	}
+
+	fmt.Printf("\n--- Next greater element ---\n\n")
+	for _, tc := range []struct {
+		nums1 []int
+		nums2 []int
+		want  []int
+	}{
+		{[]int{4, 1, 2}, []int{1, 3, 4, 2}, []int{-1, 3, -1}},
+		{[]int{2, 4}, []int{1, 2, 3, 4}, []int{3, -1}},
+	} {
+		got := nextGreaterElement(tc.nums1, tc.nums2)
+		status := "PASS"
+		if !slices.Equal(got, tc.want) {
+			status = "FAIL"
+		}
+		fmt.Printf("[%s] nextGreaterElement(%v, %v) = %v (want %v)\n", status, tc.nums1, tc.nums2, got, tc.want)
 	}
 }
 
@@ -148,4 +168,90 @@ func (s *Stack) validParenthesis(str string) bool {
 	// check if there are leftovers in stack (unmatched openers)
 
 	return len(stack) == 0
+}
+
+// Monotonic Stack example question + practice
+// Family 2 — Monotonic stack. This is the senior-flavored one — the stack holds elements that are still waiting for their answer, in strictly increasing or strictly decreasing order. When a new element arrives that "resolves" the ones waiting, you pop them. Mental model: "I'm holding things that haven't found their next-greater (or smaller) yet. The current value pays off whoever it beats."
+// KEY:
+// The problem that screams "monotonic stack"
+// The signature problem is next greater element / next smaller element / days until warmer. Generalized:
+//
+// "For each element in an array, find the next (or previous) element that is larger (or smaller) than it."
+
+// Next Greater Element I (LeetCode #496, Easy)
+// You're given two distinct integer arrays nums1 and nums2, where nums1 is a subset of nums2.
+// For each element of nums1, find the next greater element in nums2 (the first element to the right of it in nums2 that is strictly greater). If none exists, return -1 for that position.
+// Return an array result where result[i] is the next greater element for nums1[i] in nums2.
+// nums1 = [4, 1, 2]
+// nums2 = [1, 3, 4, 2]
+// → For 4 in nums2 (index 2), nothing to the right is greater → -1
+// → For 1 in nums2 (index 0), next greater is 3
+// → For 2 in nums2 (index 3), nothing to the right → -1
+// Output: [-1, 3, -1]
+//
+// nums1 = [2, 4]
+// nums2 = [1, 2, 3, 4]
+// → For 2: next greater is 3
+// → For 4: nothing → -1
+// Output: [3, -1]
+// Constraints: 1 ≤ nums1.length ≤ nums2.length ≤ 1000. All elements unique.
+// Before you code — articulate to yourself:
+//
+// Which family? (Monotonic, obviously, but say it out loud.)
+// What is the stack holding? Hint: it's elements from nums2 that are still waiting for a next-greater. What kind of monotonic order do they maintain?
+// What event causes a pop, and what does the pop signify?
+// How do you connect a nums2 element to its position in nums1? Hint: build a result map keyed by value (since elements are unique), then translate to nums1 at the end.
+//
+// One subtlety to spot before coding: you only need to walk through nums2 once. As you walk, the stack maintains "values still waiting to find someone bigger to their right." When a new value arrives, it resolves any waiting values smaller than itself. After the full walk, anything still on the stack never found a next-greater — those get -1.
+// The stack will be monotonic decreasing (values waiting for a bigger value, so they sit in decreasing order from bottom to top). When a bigger value arrives, it pops all the smaller waiting values from the top.
+// State the amortized O(n) when you state complexity — that's the senior move for monotonic.
+
+// Our version of explaining the solution (insights)
+// "For each value in nums1, we need to find its next-greater in nums2. Brute force walks nums2 separately per query — O(n²). The optimization is to precompute next-greater for EVERY value in nums2 in one pass, store in a map, then nums1 queries become O(1) map lookups. The one pass uses a stack to hold nums2 values still waiting for a bigger one. As we walk nums2 left-to-right, each arrival pops smaller waiters and records 'waiter → arrival' in the map. Leftovers at the end get -1. Then we walk nums1 and read the map."
+
+func nextGreaterElement(nums1 []int, nums2 []int) []int {
+	// stack strategy here to keep the smallest thing at top, largest at bottom with these rules:
+	// Add the first guy in regardless.
+	// Compare to current element. If smaller, found a match — pop it.
+	// Keep comparing and popping the next ones.
+	// THEN add the current element, which is larger than what's left.
+	waitingStack := make([]int, 0)
+	nextGreater := make(map[int]int)
+
+	res := make([]int, 0)
+
+	// iterate through nums2 ONCE to precomute all the "next greaters", storing solutions in a map
+	for index, num2 := range nums2 {
+		if index == 0 {
+			waitingStack = append(waitingStack, num2) // first one starts in stack
+			continue                                  // no next greatest check in the first round
+		}
+
+		// check if next greatest is found, and iterate till no more are found
+		// peek
+		for len(waitingStack) > 0 && num2 > waitingStack[len(waitingStack)-1] {
+			// found, store map
+			original := waitingStack[len(waitingStack)-1]
+			nextGreater[original] = num2 // map the original guy waiting for his next greater to the current number
+
+			// shrink, dont need this number on the stack anymore
+			waitingStack = waitingStack[:len(waitingStack)-1]
+		}
+
+		// regardless, we need to add current number to the stack, its the first time we met this number
+		waitingStack = append(waitingStack, num2)
+	}
+
+	// map over waiting stack to -1, add them to map, as remaining stack items didnt find their next greatest
+	for _, stillWaiting := range waitingStack {
+		nextGreater[stillWaiting] = -1
+	}
+
+	// iterate over nums1 and construct answer
+	for _, num1 := range nums1 {
+		mappedNum1 := nextGreater[num1]
+		res = append(res, mappedNum1)
+	}
+
+	return res
 }
