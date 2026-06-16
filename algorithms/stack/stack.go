@@ -255,3 +255,88 @@ func nextGreaterElement(nums1 []int, nums2 []int) []int {
 
 	return res
 }
+
+// The Tier 1 medium
+
+// Minimum Remove to Make Valid Parentheses (LeetCode #1249, Medium).
+
+// Given a string s of '(', ')', and lowercase English letters, remove the minimum number of parentheses (in any positions) so that the resulting string is a valid parentheses string. Return any valid result.
+// Formally, a valid parentheses string is:
+//
+// The empty string, or
+// A string AB where A and B are valid, or
+// A string (A) where A is valid.
+//
+// "lee(t(c)o)de)"   →   "lee(t(c)o)de"   (remove the last ')')
+// "a)b(c)d"         →   "ab(c)d"         (remove the ')')
+// "))(("            →   ""               (remove all four — nothing valid possible)
+// "(a(b(c)d)"       →   "a(b(c)d)" or "(a(bc)d)" or "(ab(c)d)"   (remove one of the openers)
+// "abc"             →   "abc"            (no parens, already valid)
+// Constraints: 1 ≤ len(s) ≤ 10^5. Only '(', ')', and lowercase a-z.
+// Before you code, articulate to yourself:
+//
+// Which family? (Matching, obviously.)
+// What does the stack hold this time? Hint: not the openers themselves. There's a twist — think about what info you need to know later when removing.
+// When do you know an opener is "doomed"? When do you know a closer is "doomed"?
+// At the very end, what's left on the stack, and what do you do with it?
+
+func minRemoveToMakeValid(s string) string {
+	// edge cases that were claimed as "valid" by the question
+
+	// empty string, directly return
+	if s == "" {
+		return s
+	}
+
+	// for tracking openers and closers
+	// can key in OK = opener
+	// can key in got VALUE = expected close
+	matchingPair := map[rune]rune{
+		'{': '}',
+		'[': ']',
+		'(': ')',
+	}
+
+	stack := make([]rune, 0)
+
+	for _, letter := range s {
+		_, isOpener := matchingPair[letter]
+
+		// if its opener, we store it in the stack and skip, waiting for closer
+		if isOpener {
+			stack = append(stack, letter)
+			continue // skip, no expected closers
+		}
+
+		// anywhere below is dealing with checking if current element is the expected closer
+		if len(stack) == 0 {
+			// reached the need for checking a closer matches the most recent opener but no opener in stack, not valid
+			// return false
+			return ""
+		}
+
+		// peek the stack
+		mostRecentOpener := stack[len(stack)-1]
+
+		// check for expected closer of the most recent opener
+		expectedCloser, ok := matchingPair[mostRecentOpener]
+
+		if !ok {
+			// return false, no match at all
+			return ""
+		}
+
+		// check if the expected one matches the current letter being iterated on, if the current rune is not the expected one
+		// to remove the possibility of invalid
+		if expectedCloser != letter {
+			// return false
+			return ""
+		}
+
+		// worked, pop (shrink the stack)
+		stack = stack[:len(stack)-1]
+	}
+
+	// entire string passed, return true
+	return s
+}
