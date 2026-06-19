@@ -75,7 +75,7 @@ func Run() {
 		if got != tc.want {
 			status = "FAIL"
 		}
-		fmt.Printf("[%s] minRemoveToMakeValid(%q) = %q (want %q)\n", status, tc.input, got, tc.want)
+		fmt.Printf("[%s] minRemoveToMakeValid(%q)\n      got:  %q\n      want: %q\n\n", status, tc.input, got, tc.want)
 	}
 
 	fmt.Printf("\n--- Valid Parenthesis ---\n\n")
@@ -98,7 +98,7 @@ func Run() {
 		if got != tc.want {
 			status = "FAIL"
 		}
-		fmt.Printf("[%s] validParenthesis(%q) = %v (want %v)\n", status, tc.input, got, tc.want)
+		fmt.Printf("[%s] validParenthesis(%q)\n      got:  %v\n      want: %v\n\n", status, tc.input, got, tc.want)
 	}
 
 	fmt.Printf("\n--- Next greater element ---\n\n")
@@ -115,7 +115,7 @@ func Run() {
 		if !slices.Equal(got, tc.want) {
 			status = "FAIL"
 		}
-		fmt.Printf("[%s] nextGreaterElement(%v, %v) = %v (want %v)\n", status, tc.nums1, tc.nums2, got, tc.want)
+		fmt.Printf("[%s] nextGreaterElement(%v, %v)\n      got:  %v\n      want: %v\n\n", status, tc.nums1, tc.nums2, got, tc.want)
 	}
 }
 
@@ -339,7 +339,9 @@ func minRemoveToMakeValid(s string) string {
 	}
 
 	// check if stack have leftover openers, all invalid
-	if len(stack) == 0 {
+	if len(stack) > 0 {
+		fmt.Printf("\nleftovers: %+v\n\n", stack)
+
 		for _, i := range stack {
 			invalidRunes[i] = true
 		}
@@ -347,13 +349,12 @@ func minRemoveToMakeValid(s string) string {
 
 	var res []rune
 
-	// iterate over runes again, construting string for only valid indexes
+	// iterate over runes again, constructing string for only valid indexes
 	for i, rune := range s {
 		if _, ok := invalidRunes[i]; ok {
 			continue
 		}
 		res = append(res, rune)
-
 	}
 
 	return string(res)
