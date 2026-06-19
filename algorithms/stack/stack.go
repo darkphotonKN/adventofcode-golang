@@ -60,6 +60,24 @@ type Stack struct{}
 func Run() {
 	s := &Stack{}
 
+	fmt.Printf("\n--- Min Remove To Make Valid ---\n\n")
+	for _, tc := range []struct {
+		input string
+		want  string
+	}{
+		{"lee(t(c)o)de)", "lee(t(c)o)de"},
+		{"a)b(c)d", "ab(c)d"},
+		{"))((", ""},
+		{"abc", "abc"},
+	} {
+		got := minRemoveToMakeValid(tc.input)
+		status := "PASS"
+		if got != tc.want {
+			status = "FAIL"
+		}
+		fmt.Printf("[%s] minRemoveToMakeValid(%q) = %q (want %q)\n", status, tc.input, got, tc.want)
+	}
+
 	fmt.Printf("\n--- Valid Parenthesis ---\n\n")
 	for _, tc := range []struct {
 		input string
@@ -281,62 +299,62 @@ func nextGreaterElement(nums1 []int, nums2 []int) []int {
 // At the very end, what's left on the stack, and what do you do with it?
 
 func minRemoveToMakeValid(s string) string {
-	// edge cases that were claimed as "valid" by the question
-
-	// empty string, directly return
-	if s == "" {
-		return s
+	// empty string, valid
+	if len(s) == 0 {
+		return s // return original
 	}
 
-	// for tracking openers and closers
-	// can key in OK = opener
-	// can key in got VALUE = expected close
-	matchingPair := map[rune]rune{
-		'{': '}',
-		'[': ']',
-		'(': ')',
+	// create stack
+	stack := make([]int, 0)
+
+	// store invalid rune locations, index as key
+	invalidRunes := make(map[int]bool)
+
+	for i, rune := range s {
+		// opener and closer always match, we can simply use count to maintain instead of
+		// checking brackets
+
+		// is opener
+		if rune == '(' {
+			// add index to stack, store it just incase closer was not found
+			stack = append(stack, i)
+
+			// continue, don't check for closer when its opener
+			continue
+		}
+
+		// is closer
+		if rune == ')' {
+			// check if stack had an opener
+			if len(stack) != 0 {
+				// pop stack, matching but no need to store match just skip the check (string still valid)
+				stack = stack[:len(stack)-1]
+				continue
+			}
+
+			// invalid, unopened
+			// store to remove
+			invalidRunes[i] = true
+		}
 	}
 
-	stack := make([]rune, 0)
-
-	for _, letter := range s {
-		_, isOpener := matchingPair[letter]
-
-		// if its opener, we store it in the stack and skip, waiting for closer
-		if isOpener {
-			stack = append(stack, letter)
-			continue // skip, no expected closers
+	// check if stack have leftover openers, all invalid
+	if len(stack) == 0 {
+		for _, i := range stack {
+			invalidRunes[i] = true
 		}
-
-		// anywhere below is dealing with checking if current element is the expected closer
-		if len(stack) == 0 {
-			// reached the need for checking a closer matches the most recent opener but no opener in stack, not valid
-			// return false
-			return ""
-		}
-
-		// peek the stack
-		mostRecentOpener := stack[len(stack)-1]
-
-		// check for expected closer of the most recent opener
-		expectedCloser, ok := matchingPair[mostRecentOpener]
-
-		if !ok {
-			// return false, no match at all
-			return ""
-		}
-
-		// check if the expected one matches the current letter being iterated on, if the current rune is not the expected one
-		// to remove the possibility of invalid
-		if expectedCloser != letter {
-			// return false
-			return ""
-		}
-
-		// worked, pop (shrink the stack)
-		stack = stack[:len(stack)-1]
 	}
 
-	// entire string passed, return true
-	return s
+	var res []rune
+
+	// iterate over runes again, construting string for only valid indexes
+	for i, rune := range s {
+		if _, ok := invalidRunes[i]; ok {
+			continue
+		}
+		res = append(res, rune)
+
+	}
+
+	return string(res)
 }
