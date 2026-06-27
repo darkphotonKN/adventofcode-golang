@@ -1,7 +1,9 @@
 package main
 
 import (
-	"challenges/algorithms/stack"
+	"challenges/algorithms/search"
+	// slidingwindow "challenges/algorithms/sliding_window"
+	// "challenges/algorithms/stack"
 	// "challenges/practice"
 )
 
@@ -67,5 +69,7 @@ func main() {
 	// questions.TestFlagged()
 
 	// ALGORITHM PRACTICE - swap which package's Run() is active to practice a different one
-	stack.Run()
+	// stack.Run()
+	// slidingwindow.Run()
+	search.Run()
 }
